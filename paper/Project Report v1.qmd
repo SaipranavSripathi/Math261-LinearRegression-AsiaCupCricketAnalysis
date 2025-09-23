@@ -2,7 +2,7 @@
 title: "Impact of Extras and Top Individual Scores on Team Totals in Asia Cup Cricket"
 author: "Sai Pranav Sripathi"
 date: "09/20/2025"
-abstract: "This paper investigates whether extra runs—awarded due to bowling errors—meaningfully impact a team’s total score in Asia Cup cricket matches (1984–2022). Applying simple linear regression, the analysis finds that extras show only a weak correlation with total runs scored. In search of a stronger predictor, we also examine the effect of a team’s highest individual batting score using the same approach. Results demonstrate that while extras offer a modest contribution, the highest individual score is strongly associated with total team runs. These findings highlight that star player performances are much more influential than extras in boosting team outcomes, as detailed in the sections that follow."
+abstract: "This paper investigates whether extra runs scored due to bowling errors, meaningfully impact a team’s total score in cricket matches. Applying simple linear regression, the analysis finds that extras show only a weak correlation with total runs scored. In search of a stronger predictor, we also examine the effect of a team’s highest individual batting score using the same approach. Results demonstrate that while extras offer a modest contribution, the highest individual score is strongly associated with total team runs. These findings highlight that star player performances are much more influential than extras in boosting team outcomes, as detailed in the sections that follow."
 research_question: "How do extra runs and a team's highest individual score each affect the total runs scored in Asia Cup cricket matches?"
 format: pdf
 number-sections: true
@@ -26,27 +26,25 @@ library(knitr)
 
 # Introduction {#section-intro}
 
-Cricket matches are often decided not just by team effort, but by unique factors such as the number of extra runs and standout individual performances. In high-stakes tournaments like the Asia Cup, understanding what actually drives team scoring is crucial for coaches, players, and analysts alike. The central question of this paper is: *How do extra runs and a team's highest individual batting score each affect the total runs scored in a match?*
+Cricket match have quite a lot of factors on which the results depend upon, such as extras scored, standout individual performances etc. Tournaments with high stakes like Asia Cup, its crucial to understand what drives a team's success. Scoring is a crucial aspect for coaches, players and analysts alike. The central question of this paper is: How do extras scored and a team's highest individual score in a match affect the total score of the team. **Extras are runs awarded to the batting team as a result of rule infringements or errors committed by the bowling team.**
 
-This question matters because team strategies frequently target the reduction of extras, and commentators regularly highlight the impact of exceptional single-player innings. Prior research has examined statistical relationships in cricket, but much of it focuses on general predictors of match outcomes or player averages rather than quantifying the effects of extras and individual highs on team totals.
+This is a significant issue, as the team strategies would generally involve reducing the extras, and experts often highlight the impact of an extraordinary performance of a single player. Existing research focus on statistical relations alone, but main concentration is on the general predictors of match outcomes or on players averages, rather on the effects of extras and individual performances on team totals.
 
-In this analysis, we use match-level data from the Asia Cup (1984–2022) and apply simple linear regression to both extras and highest individual scores as predictors of total runs seperately. We find that extras are only weakly related to team scoring, whereas a team's top individual score strongly influences their total runs.
-
-The remainder of this paper describes the dataset and variables used, details the methods of analysis, presents and interprets the main results, and discusses the strategic and statistical implications of these findings.
+In this analysis, we analyse match-level data of the Asia Cup from 1984 to 2022, and apply simple linear regression to regress total score with extras scored and highest individual score separately. We discover that extras are weakly related to the total team score, whereas the highest individual score has a major impact on their total scores.
 
 The remainder of this paper is as follows. Section 2 focuses on describing the Asia Cup dataset and its principal variables. Section 3 outlines the methods used for analyzing the effects of extras and highest individual scores on team totals. Section 4 presents the main results and interprets their meaning for understanding cricket scoring. Finally, Section 5 discusses the broader strategic significance of these findings.
 
 # Data and Variables {#section-data-variables}
 
-This analysis uses match-level data from the Asia Cup cricket tournaments, accessible at [@scorenetwork] Data Repository. The dataset contains a record for every match played from the inaugural Asia Cup in 1984 up to 2022, now held every alternate year in various Asian host cities.
+This analysis uses match-level data from the Asia Cup tournaments, accessible at [@scorenetwork] Data Repository. The dataset contains a record for every match played from the inaugural Asia Cup in 1984 up to 2022, now held every alternate year in various Asian host cities.
 
-The principal variables used to answer the research question are:
+The **principal variables** used to answer the research question are:
 
-Run Scored: Total runs scored by each team in a match (response variable).
+**Run Scored**: Total runs scored by each team in a match (response variable).
 
-Extras: Extra runs scored due to bowling errors (wides, no-balls, byes, leg byes).
+**Extras**: Extra runs scored due to bowling errors (wides, no-balls, byes, leg byes).
 
-Highest Score: Highest individual batting score for each team in a match (key predictor).
+**Highest Score**: Highest individual batting score for each team in a match (key predictor).
 
 ```{r}
 #| include: false
@@ -112,17 +110,15 @@ grid.arrange(p1, p2, p3, ncol = 3)
 
 Additional variables include team name, opponent name, host venue, year, toss outcome, selection after toss, total fours and sixes, match result, and extras given up.
 
-Sample size is approximately 250 team-match records. Each row represents one team’s performance in one Asia Cup match. To ensure data quality and reliable results, I checked all main variables for missing (null or empty) values and excluded any rows with incomplete data from the analysis. This step prevents biased results and ensures that all summaries and regression models are based on complete and valid match records.As part of my data preparation, I checked each column for null or empty values and excluded any rows with missing data from the analysis to ensure accuracy and avoid bias in the results.
+The sample is approximately 250 matches records. Each row represents a match and the host team's performance in it. To ensure data quality and reliable results, I checked the main variables for missing (null or empty) values and there were none. This step prevents biased results and ensures that all summaries and regression models are based on complete and valid match records.
 
-While the Asia Cup features some of the most cricket-intensive nations globally—India, Pakistan, Sri Lanka, Bangladesh, Afghanistan—other prominent cricket countries such as Australia, England, and West Indies are not included, as they do not participate in the Asia Cup. This restricts generalizability: the analysis applies best to Asian teams, which comprise the majority of international cricket matches, but may not extend to all cricket-playing nations.
+While the Asia Cup features some of the most cricket-intensive nations globally—India, Pakistan, Sri Lanka, Bangladesh, Afghanistan—other prominent cricket countries such as Australia, England, and West Indies are not included, as they do not participate in the Asia Cup. This makes generalization difficult: the analysis applies best to Asian teams who's data is being analysed, which comprise the majority of international cricket matches, but may not extend to all cricket-playing nations.
 
-To illuminate possible relationships, summary statistics and scatter plots are presented in the results section; for example, histograms of Run Scored and Highest Individual Score, and scatter plots showing their association.
-
-In summary, this dataset is well suited to addressing the question of how extras and highest scores affect team total runs in high-level cricket, though the findings are not fully generalizable to all international cricket contexts.
+In summary, this dataset is well suited to addressing the question of how extras and highest scores affect team total runs in high-level cricket, though the findings are not fully generalized to all international cricket contexts.
 
 # Methods {#section-methods}
 
-To examine how extras scored and highest individual batting score each influence team totals, I fit two separate simple linear regression models to the Asia Cup data.
+The affect of extras scored and highest individual batting score on teams total is examined by two seperate simple linear regression models to the entire Asia Cup data available.
 
 **First Regression: Effect of Extras Scored**
 
@@ -158,7 +154,7 @@ extras_vs_total_fit <- lm(asia_cup$Run.Scored ~ asia_cup$Extras.Scored)
 summary(extras_vs_total_fit)
 ```
 
-A scatter plot of extras scored versus total runs scored across all Asia Cup matches from 1984 to 2022 reveals a modest but statistically significant positive relationship. In this visualization, each point represents a team’s totals for a given match, with a fitted regression line highlighting the association. The linear regression output indicates that, on average, each additional run given as an extra is associated with an increase of approximately 1.88 runs in the team’s total score (coefficient = 1.88, p \< 0.001). However, the adjusted R2R2 value is about 0.04, meaning that extras account for only a small fraction (\~4%) of the variation in total scores. While reducing extras can marginally benefit overall performance, these findings suggest that many other factors play larger roles in determining a team’s total runs.
+A scatter plot of extras scored versus total runs scored across all Asia Cup matches from 1984 to 2022 reveals a modest/low but statistically significant positive relationship. In the visualization, each point represents a team’s totals for a given match with the extras scored on corresponding axes.
 
 **Second Regression: Effect of Highest Individual Score**
 
@@ -177,12 +173,14 @@ Here, $\beta_0$ is the intercept, $\beta_1$ captures the effect of the top indiv
 ggplot(asia_cup, aes(x = Highest.Score, y = Run.Scored)) +
   geom_point(color = "red", alpha = 0.7, size = 2) +
   labs(
-    x = "Extras Scored",
+    x = "Highest Individual Score",
     y = "Run Scored",
-    title = "Scatter plot of Extras vs Run Scored (Asia Cup 1984–2022)"
+    title = "Scatter plot of Highest Individual Score vs Run Scored (Asia Cup 1984–2022)"
   ) +
   theme_minimal()
 ```
+
+A scatter plot of highest individual score versus total runs scored across all Asia Cup matches from 1984 to 2022 reveals a high and significant positive relationship. In the visualization, each point represents a team’s totals for a given match with the highest individual score on corresponding axes.
 
 ```{r}
 #| include: false
@@ -195,7 +193,7 @@ highest_score_model <- lm(Run.Scored ~ Highest.Score, data = asia_cup)
 summary(highest_score_model)
 ```
 
-Parameter estimation is conducted using the **`lm()`** function in the R programming language [@R_lang] with data visualization and manipulation using ggplot2 and dplyr [@ggplot2; @dplyr]. Models assume independent match outcomes, additive linear relationships, and normally distributed errors with constant variance.
+Parameters estimation is done using the **`lm()`** function in the R programming language [@R_lang] with data visualization and manipulation using ggplot2 and dplyr [@ggplot2; @dplyr]. Models assume the match outcomes are independent.
 
 A main limitation of this approach is that only one predictor is included per model; additional match factors that may affect total runs (e.g., team strength, opposition quality) are not considered here and could introduce omitted variable bias. These limitations are discussed further in the Discussion section.
 
@@ -236,11 +234,13 @@ We report the parameter estimates and model summaries for both regression analys
 
 *Interpretation*:
 
--   The slope $\beta_1$ represents the expected change in total runs with each additional extra run scored.
+-   The intercept estimate $\hat{\beta_0}=b_0 = 177.07$ represents that the expected total runs in a match is 177 when the extras scored is 0, it is statistically significant as the standard error is 8.34 which is $<5\%$
 
--   The p-value tests the null hypothesis that this effect is zero. If $p<0.05$, the relationship is considered statistically significant at the conventional 5% level.
+-   The slope estimate $\hat{\beta_1}=b_1=1.88$ represents the expected change in total runs with each additional extra run scored, i .e, it is expected that an increase of 1.88 run for every additional extra scored in a match.
 
--   The R-squared value (found in **`summary(fit_extras)$r.squared`**) quantifies how much of the variation in total runs is explained by extras alone.
+-   The p-value tests the null hypothesis that this effect is zero. If $p<0.05$, the relationship is considered statistically significant at the conventional 5% level. Which mean that there is a good amount of evidence that extras scored has a positive effect on the total score in a match.
+
+-   This analysis prove that the disciplined bowling and fielding to avoid or minimize extras will boost a team's chance of conceding high scores and hence would have a better shot at winning.
 
 ```{r}
 #| warning: false
@@ -282,11 +282,13 @@ kable(tbl_highscore, escape = FALSE, caption = "Estimated coefficients from the 
 
 *Interpretation*:
 
--   The slope $\beta_1$ represents the expected change in total runs for each additional run scored by the team’s top batter.
+-   The intercept estimate $\hat{\beta_0}=b_0=83.20$ indicate that the expected team total would be 83.2 if the highest individual score is 0, which does not make a lot of sense. But based on the available data and the regression fit, this is interpreted.
 
--   The p-value and standard error provide evidence about precision and statistical significance.
+-   The slope estimate $\hat{\beta_1}=b_1=1.71$ represents the expected change in total runs for each additional run scored by the team’s top batter, i.e, with every additional run scored by the top batter in a match, the teams total is expected to rise by 1.71 runs.
 
--   R-squared (see **`summary(fit_highscore)$r.squared`**) indicates how much variation in total runs is explained by highest score alone.
+-   The standard errors of both the estimates are quite low.
+
+-   The p-value and standard error provide evidence about precision and statistical significance and not just any random chance but a real and consistent effect in the cricket matches.
 
 ```{r}
 #| warning: false
@@ -305,12 +307,14 @@ ggplot(asia_cup, aes(x = Highest.Score, y = Run.Scored)) +
 
 ```
 
-# Discussion
+# Discussion {#section-discussion}
 
-This study used simple linear regressions to measure how extras scored and a team’s highest individual batting score each affect total runs in Asia Cup matches. Results show that while extras provide a statistically significant but modest boost to team totals, the highest individual score has a stronger and more consistent influence. Thus, top batting performances outweigh the effect of extras in match outcomes.
+This study used simple linear regressions to measure and quantify how extras scored and a team’s highest individual batting score each affect total runs in Asia Cup matches. Results show that while extras provide a statistically significant but modest boost to team totals. In contrast the highest individual score has a stronger and more consistent influence on the total score of a team in the matches. These findings show that the teams with high score achievers have an improved chances to score more and thus a better chance at victory while minimizing the number of extras they concede.
 
-Key limitations include the restricted dataset (Asia Cup matches only) and the absence of other match variables or tournament contexts. Our linear approach may not capture all complexities of cricket scoring. Future work should incorporate data from non-Asian teams, test additional predictors, and explore non-linear or interaction effects.
+Key limitations include the restricted dataset (Asia Cup matches only) and the absence of other match variables or tournament contexts. Along with the other key aspects like pitch condition, moisture in the air, team strengths have not been considered. Our linear approach may not capture all complexities of cricket scoring.
 
-In conclusion, cricket teams benefit more from exceptional individual batters than from minimizing extras, guiding both coaching strategies and further research.
+Future work should incorporate data from non-Asian teams, test additional predictors, and explore non-linear or interaction effects. With other data points like the pitch, weather, partnerships would tend to give more insights on the data.
+
+In conclusion, the evidences suggest that exceptional individual batters who can produce high scores would yield more benefits to the teams scores than focusing exclusively on reducing extras. These insights have practical impacts while forming strategies and coaching any team for the tournaments.
 
 # References
