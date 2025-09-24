@@ -26,7 +26,7 @@ library(knitr)
 
 # Introduction {#section-intro}
 
-Cricket match have quite a lot of factors on which the results depend upon, such as extras scored, standout individual performances etc. Tournaments with high stakes like Asia Cup, its crucial to understand what drives a team's success. Scoring is a crucial aspect for coaches, players and analysts alike. The central question of this paper is: How do extras scored and a team's highest individual score in a match affect the total score of the team. **Extras are runs awarded to the batting team as a result of rule infringements or errors committed by the bowling team.**
+The results of a cricket match depends on a lot of factors, such as extras scored, standout individual performances etc. Tournaments with high stakes like Asia Cup, its crucial to understand what drives a team's success. Scoring is a crucial aspect for coaches, players and analysts alike. The central question of this paper is: How do extras scored and a team's highest individual score in a match affect the total score of the team. **Extras are runs awarded to the batting team as a result of rule infringements or errors committed by the bowling team.**
 
 This is a significant issue, as the team strategies would generally involve reducing the extras, and experts often highlight the impact of an extraordinary performance of a single player. Existing research focus on statistical relations alone, but main concentration is on the general predictors of match outcomes or on players averages, rather on the effects of extras and individual performances on team totals.
 
