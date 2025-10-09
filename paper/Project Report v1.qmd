@@ -7,6 +7,7 @@ research_question: "How do extra runs and a team's highest individual score each
 format: pdf
 number-sections: true
 bibliography: "references.bib"
+thanks: "Project repository available at: [https://github.com/SaipranavSripathi/Math261-LinearRegression-AsiaCupCricketAnalysis](https://github.com/SaipranavSripathi/Math261-LinearRegression-AsiaCupCricketAnalysis)."
 editor: visual
 ---
 
@@ -46,6 +47,17 @@ The **principal variables** used to answer the research question are:
 
 **Highest Score**: Highest individual batting score for each team in a match (key predictor).
 
+**Interpretation of the box plots are as follows:**
+
+-   **Total Runs Scored:**\
+    The distribution of team totals per match shows a mean around 200 and a wide spread, with most match totals lying between roughly 125 and 300 runs. This highlights the typical scoring range in Asia Cup matches.
+
+-   **Extras Scored:**\
+    This plot indicates that most teams typically concede between 8 and 18 extras per match, with a few outlier matches where the extras exceeded 30.
+
+-   **Highest Individual Score:**\
+    Teams’ top individual batting scores generally cluster around 50–90, but there are several notable outliers above 130 and even 170, representing exceptional performances by star batters.
+
 ```{r}
 #| include: false
 #| warning: false
@@ -82,21 +94,21 @@ p <- ggplot(df_long, aes(x = variable, y = value, fill = variable)) +
 # Boxplot for Total Runs
 p1 <- ggplot(asia_cup, aes(y = Run.Scored)) +
   geom_boxplot(fill = "skyblue", alpha = 0.7) +
-  labs(title = "Box Plot of Total Runs Scored",
+  labs(title = "Total Runs",
        x = "", y = "Runs") +
   theme_minimal()
 
 # Boxplot for Extras Scored
 p2 <- ggplot(asia_cup, aes(y = Extras.Scored)) +
   geom_boxplot(fill = "salmon", alpha = 0.7) +
-  labs(title = "Box Plot of Extras Scored",
+  labs(title = "Extras Scored",
        x = "", y = "Extras") +
   theme_minimal()
 
 # Boxplot for Highest Individual Score
 p3 <- ggplot(asia_cup, aes(y = Highest.Score)) +
   geom_boxplot(fill = "mediumorchid", alpha = 0.7) +
-  labs(title = "Box Plot of Highest Individual Score",
+  labs(title = "Highest Score",
        x = "", y = "Highest Score") +
   theme_minimal()
 ```
@@ -249,6 +261,7 @@ We report the parameter estimates and model summaries for both regression analys
 
 ggplot(asia_cup, aes(x = Extras.Scored, y = Run.Scored)) +
   geom_point(color = "blue", alpha = 0.7, size = 2) +
+  annotate("text", x = 30, y = 300, label = "y = 177.07 + 1.88x", size = 6, color = "black") +
   geom_smooth(method = "lm", color = "red", se = TRUE) +
   labs(
     x = "Extras Scored",
@@ -257,6 +270,35 @@ ggplot(asia_cup, aes(x = Extras.Scored, y = Run.Scored)) +
   ) +
   theme_minimal()
 ```
+
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+
+resids <- residuals(fit_extras)
+fitted <- fitted(fit_extras)
+
+par(mfrow = c(1, 2))  # Arrange plots side by side
+
+# 1. Residuals vs Fitted plot
+plot(fitted, resids,
+     xlab = "Fitted values",
+     ylab = "Residuals",
+     main = "Residuals vs Fitted")
+abline(h = 0, col = "red", lwd = 2)
+
+# 2. QQ plot with x = y line
+qq <- qqnorm(resids,
+             main = "Q-Q Residuals",
+             xlab = "Theoretical Quantiles",
+             ylab = "Standardized residuals")
+abline(0, 1, col = "blue", lwd = 2)   # This is the x = y line
+
+par(mfrow = c(1, 1)) # Reset plotting area
+```
+
+The model’s residuals are spread around zero, and the Q-Q plot shows a reasonable pattern but no alignment with the normal quantiles.
 
 **2. Regression of Total Runs on Highest Individual Score**
 
@@ -298,6 +340,7 @@ kable(tbl_highscore, escape = FALSE, caption = "Estimated coefficients from the 
 ggplot(asia_cup, aes(x = Highest.Score, y = Run.Scored)) +
   geom_point(color = "red", alpha = 0.7, size = 2) +
   geom_smooth(method = "lm", color = "blue", se = TRUE) +
+  annotate("text", x = 150, y = 300, label = "y = 83.20 + 1.71x", size = 6, color = "black") +
   labs(
     x = "Highest Individual Score",
     y = "Run Scored",
@@ -306,6 +349,36 @@ ggplot(asia_cup, aes(x = Highest.Score, y = Run.Scored)) +
   theme_minimal()
 
 ```
+
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+
+resids <- residuals(fit_highscore)
+fitted <- fitted(fit_highscore)
+
+par(mfrow = c(1, 2))  # Arrange plots side by side
+
+# 1. Residuals vs Fitted plot
+plot(fitted, resids,
+     xlab = "Fitted values",
+     ylab = "Residuals",
+     main = "Residuals vs Fitted")
+abline(h = 0, col = "red", lwd = 2)
+
+# 2. QQ plot with x = y line
+qq <- qqnorm(resids,
+             main = "Q-Q Residuals",
+             xlab = "Theoretical Quantiles",
+             ylab = "Standardized residuals")
+abline(0, 1, col = "blue", lwd = 2)   # This is the x = y line
+
+par(mfrow = c(1, 1)) # Reset plotting area
+
+```
+
+The residuals vs fitted plot for the regression of highest individual score on run scored has a pattern where the residuals are randomly distributed. The Q-Q plot doesn't follow normal well for this regression.
 
 # Discussion {#section-discussion}
 
