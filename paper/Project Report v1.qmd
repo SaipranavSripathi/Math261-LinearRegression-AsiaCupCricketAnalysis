@@ -2,7 +2,7 @@
 title: "Impact of Extras and Top Individual Scores on Team Totals in Asia Cup Cricket"
 author: "Sai Pranav Sripathi"
 date: "09/20/2025"
-abstract: "This paper investigates whether extra runs scored due to bowling errors, meaningfully impact a team’s total score in cricket matches. Applying simple linear regression, the analysis finds that extras show only a weak correlation with total runs scored. In search of a stronger predictor, we also examine the effect of a team’s highest individual batting score using the same approach. Results demonstrate that while extras offer a modest contribution, the highest individual score is strongly associated with total team runs. These findings highlight that star player performances are much more influential than extras in boosting team outcomes, as detailed in the sections that follow."
+abstract: "This paper investigates whether extra runs scored due to bowling errors meaningfully impact a team’s total score in cricket matches. Applying simple linear regression, the analysis finds that extras show only a weak correlation with total runs scored. In search of a stronger predictor, we also examine the effect of a team’s highest individual batting score using the same approach. Results demonstrate that while extras offer a modest contribution, the highest individual score is strongly associated with total team runs. These findings highlight that star player performances are much more influential than extras in boosting team outcomes, as detailed in the sections that follow."
 research_question: "How do extra runs and a team's highest individual score each affect the total runs scored in Asia Cup cricket matches?"
 format: pdf
 number-sections: true
@@ -21,15 +21,16 @@ library(dplyr)
 library(ggplot2)
 library(reshape2)
 library(gridExtra)
+library(grid)
 library(broom)
 library(knitr)
 ```
 
 # Introduction {#section-intro}
 
-The results of a cricket match depends on a lot of factors, such as extras scored, standout individual performances etc. Tournaments with high stakes like Asia Cup, its crucial to understand what drives a team's success. Scoring is a crucial aspect for coaches, players and analysts alike. The central question of this paper is: How do extras scored and a team's highest individual score in a match affect the total score of the team. **Extras are runs awarded to the batting team as a result of rule infringements or errors committed by the bowling team.**
+The result of a cricket match depends on a lot of factors, such as extras scored, standout individual performances to name a few. In tournaments with high stakes like Asia Cup, it's crucial to understand what drives a team's success. Scoring is one of the crucial aspect for coaches, players and analysts alike. The central question of this paper is: How do extras scored and a team's highest individual score in a match affect the total score of the team? **Extras are runs awarded to the batting team as a result of rule infringements or errors committed by the bowling team.**
 
-This is a significant issue, as the team strategies would generally involve reducing the extras, and experts often highlight the impact of an extraordinary performance of a single player. Existing research focus on statistical relations alone, but main concentration is on the general predictors of match outcomes or on players averages, rather on the effects of extras and individual performances on team totals.
+This is a significant issue, as the team strategies would generally involve reducing the extras, and experts often highlight the impact of an extraordinary performance of a single player. Existing research focus on statistical relations alone, but main concentration is on the general predictors of match outcomes [@jhanwar2016teamcomp] and [@kampakis2015englishcounty] or on players averages [@dalal2024cricketML], rather on the effects of extras and individual performances on team totals.
 
 In this analysis, we analyse match-level data of the Asia Cup from 1984 to 2022, and apply simple linear regression to regress total score with extras scored and highest individual score separately. We discover that extras are weakly related to the total team score, whereas the highest individual score has a major impact on their total scores.
 
@@ -37,26 +38,11 @@ The remainder of this paper is as follows. Section 2 focuses on describing the A
 
 # Data and Variables {#section-data-variables}
 
-This analysis uses match-level data from the Asia Cup tournaments, accessible at [@scorenetwork] Data Repository. The dataset contains a record for every match played from the inaugural Asia Cup in 1984 up to 2022, now held every alternate year in various Asian host cities.
+This analysis uses match-level data collected from the Asia Cup tournaments, accessible at [@scorenetwork] Data Repository. The dataset contains a record for every match played from the inaugural Asia Cup in 1984 up to 2022, now held every alternate year in various Asian host cities.
 
-The **principal variables** used to answer the research question are:
+To address the central research question, we will analyse 3 principal variables, first, total runs scored by each team in a match as primary response variable. Second, extras represent the additional runs awarded due to bowling errors, including wides, no-balls, byes etc. Third, the highest individual batting score from the team in a match acts as the key predictor for standout performances.
 
-**Run Scored**: Total runs scored by each team in a match (response variable).
-
-**Extras**: Extra runs scored due to bowling errors (wides, no-balls, byes, leg byes).
-
-**Highest Score**: Highest individual batting score for each team in a match (key predictor).
-
-**Interpretation of the box plots are as follows:**
-
--   **Total Runs Scored:**\
-    The distribution of team totals per match shows a mean around 200 and a wide spread, with most match totals lying between roughly 125 and 300 runs. This highlights the typical scoring range in Asia Cup matches.
-
--   **Extras Scored:**\
-    This plot indicates that most teams typically concede between 8 and 18 extras per match, with a few outlier matches where the extras exceeded 30.
-
--   **Highest Individual Score:**\
-    Teams’ top individual batting scores generally cluster around 50–90, but there are several notable outliers above 130 and even 170, representing exceptional performances by star batters.
+The box plots in [@fig-boxplots] helps illustrate the distribution of these variables across the dataset. The plot for total runs scored reveals that team scores in the Asia Cup average around 200, with a broad spread ranging from approximately 125 to 300 runs. This displays the typical scoring environment in high-level tournament matches. When examining extras conceded, most teams allow between 8 and 18 runs per match, although the data includes a few exceptional outliers where extras exceeded 30. The box plot for the highest individual score indicates that top batters generally achieve scores clustered between 50 and 90, where several outstanding performances rising above 130 and sometimes crossing 170.
 
 ```{r}
 #| include: false
@@ -89,48 +75,59 @@ p <- ggplot(df_long, aes(x = variable, y = value, fill = variable)) +
   labs(title = "Box Plots of Total Runs, Extras, and Highest Individual Score",
        x = "", y = "Runs") +
   theme_minimal()
-#print(p)
 
 # Boxplot for Total Runs
 p1 <- ggplot(asia_cup, aes(y = Run.Scored)) +
   geom_boxplot(fill = "skyblue", alpha = 0.7) +
-  labs(title = "Total Runs",
+  labs(title = "Distribution of Total Runs Scored",
        x = "", y = "Runs") +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 13),
+  )
 
 # Boxplot for Extras Scored
 p2 <- ggplot(asia_cup, aes(y = Extras.Scored)) +
   geom_boxplot(fill = "salmon", alpha = 0.7) +
-  labs(title = "Extras Scored",
+  labs(title = "Distribution of Extras Scored",
        x = "", y = "Extras") +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 13),
+  )
 
 # Boxplot for Highest Individual Score
 p3 <- ggplot(asia_cup, aes(y = Highest.Score)) +
   geom_boxplot(fill = "mediumorchid", alpha = 0.7) +
-  labs(title = "Highest Score",
+  labs(title = "Distribution of the Highest Individual Score",
        x = "", y = "Highest Score") +
-  theme_minimal()
+  theme_minimal()+
+  theme(
+    plot.title = element_text(size = 13),
+  )
 ```
 
 ```{r}
 #| warning: false
 #| message: false
 #| echo: false
+#| fig-width: 13
+#| fig-height: 5
+#| label: fig-boxplots
+#| fig-cap: "Boxplots showing the distribution of total runs, extras scored, and highest individual score for teams in Asia Cup matches (1984–2022)."
+
 grid.arrange(p1, p2, p3, ncol = 3)
 ```
 
-Additional variables include team name, opponent name, host venue, year, toss outcome, selection after toss, total fours and sixes, match result, and extras given up.
-
-The sample is approximately 250 matches records. Each row represents a match and the host team's performance in it. To ensure data quality and reliable results, I checked the main variables for missing (null or empty) values and there were none. This step prevents biased results and ensures that all summaries and regression models are based on complete and valid match records.
+Each match record includes additional information such as team and opponent names, venue, year, toss, outcome, selection after toss, extras given. The dataset contains a record of roughly 250 matches, representing comprehensive sample of teams in Asia Cup and no missing values were found.
 
 While the Asia Cup features some of the most cricket-intensive nations globally—India, Pakistan, Sri Lanka, Bangladesh, Afghanistan—other prominent cricket countries such as Australia, England, and West Indies are not included, as they do not participate in the Asia Cup. This makes generalization difficult: the analysis applies best to Asian teams who's data is being analysed, which comprise the majority of international cricket matches, but may not extend to all cricket-playing nations.
 
-In summary, this dataset is well suited to addressing the question of how extras and highest scores affect team total runs in high-level cricket, though the findings are not fully generalized to all international cricket contexts.
+In summary, this dataset is well suited to addressing the question of how extras and highest scores affect team total runs in high-level cricket, though the findings are not fully generalizable to all international cricket contexts.
 
 # Methods {#section-methods}
 
-The affect of extras scored and highest individual batting score on teams total is examined by two seperate simple linear regression models to the entire Asia Cup data available.
+The affect of extras scored and highest individual batting score on teams total is examined by two separate simple linear regression models to the entire Asia Cup data available.
 
 **First Regression: Effect of Extras Scored**
 
@@ -140,12 +137,15 @@ $$
 RunScored_i = \beta_0 + \beta_1 * ExtrasScored_i + \epsilon_i
 $$
 
-where $\beta_0$ is the intercept, $\beta_1$ measures the expected change in total runs per additional extra run, and $\epsilon_i$ is the error term for match $i$.
+where $\beta_0$ is the intercept, $\beta_1$ measures the expected change in total runs per additional extra run, and $\epsilon_i$ is the error term for match $i$ which represents the unexplained variation of total runs scored. And we assume that these errors are independent from each other, distributed normally with constant variance.
 
 ```{r}
 #| warning: false
 #| message: false
 #| echo: false
+#| fig-cap: Relation between extras scored and total team runs in Asia Cup matches
+#| label: fig-scatterplot1
+
 ggplot(asia_cup, aes(x = Extras.Scored, y = Run.Scored)) +
   geom_point(color = "blue", alpha = 0.7, size = 2) +
   labs(
@@ -166,7 +166,7 @@ extras_vs_total_fit <- lm(asia_cup$Run.Scored ~ asia_cup$Extras.Scored)
 summary(extras_vs_total_fit)
 ```
 
-A scatter plot of extras scored versus total runs scored across all Asia Cup matches from 1984 to 2022 reveals a modest/low but statistically significant positive relationship. In the visualization, each point represents a team’s totals for a given match with the extras scored on corresponding axes.
+The scatter plot in [@fig-scatterplot1] describes of extras scored versus total runs scored across all Asia Cup matches from 1984 to 2022 reveals a modest/low but statistically significant positive relationship. In the visualization, each point represents a team’s totals for a given match with the extras scored on corresponding axes.
 
 **Second Regression: Effect of Highest Individual Score**
 
@@ -182,17 +182,19 @@ Here, $\beta_0$ is the intercept, $\beta_1$ captures the effect of the top indiv
 #| warning: false
 #| message: false
 #| echo: false
+#| fig-cap: Relation between Highest Individual Score and Total Team Score in Asia Cup matches
+#| label: fig-scatterplot2
 ggplot(asia_cup, aes(x = Highest.Score, y = Run.Scored)) +
   geom_point(color = "red", alpha = 0.7, size = 2) +
   labs(
     x = "Highest Individual Score",
     y = "Run Scored",
-    title = "Scatter plot of Highest Individual Score vs Run Scored (Asia Cup 1984–2022)"
+    title = "Scatter plot of Highest Individual Score vs Run Scored"
   ) +
   theme_minimal()
 ```
 
-A scatter plot of highest individual score versus total runs scored across all Asia Cup matches from 1984 to 2022 reveals a high and significant positive relationship. In the visualization, each point represents a team’s totals for a given match with the highest individual score on corresponding axes.
+The scatter plot in [@fig-scatterplot2] describes of highest individual score versus total runs scored across all Asia Cup matches from 1984 to 2022 reveals a high and significant positive relationship. In the visualization, each point represents a team’s totals for a given match with the highest individual score on corresponding axes.
 
 ```{r}
 #| include: false
@@ -205,15 +207,13 @@ highest_score_model <- lm(Run.Scored ~ Highest.Score, data = asia_cup)
 summary(highest_score_model)
 ```
 
-Parameters estimation is done using the **`lm()`** function in the R programming language [@R_lang] with data visualization and manipulation using ggplot2 and dplyr [@ggplot2; @dplyr]. Models assume the match outcomes are independent.
+Parameter estimations are done using the **`lm()`** function in the R programming language [@R_lang] with data visualization and manipulation using ggplot2 and dplyr [@ggplot2; @dplyr]. Models assume the match outcomes are independent.
 
 A main limitation of this approach is that only one predictor is included per model; additional match factors that may affect total runs (e.g., team strength, opposition quality) are not considered here and could introduce omitted variable bias. These limitations are discussed further in the Discussion section.
 
 # Results
 
-We report the parameter estimates and model summaries for both regression analyses:\
-(1) the impact of extras scored on total runs, and\
-(2) the impact of highest individual score on total runs.
+We report the parameter estimates and model summaries for both regression analyses:
 
 1.  **Regression of Total Runs on Extras Scored**
 
@@ -244,24 +244,22 @@ We report the parameter estimates and model summaries for both regression analys
 
     ```
 
-*Interpretation*:
+Findings from the regression analysis exploring the relation between extras scored and total runs scored by the team in Asia Cup matches. The fitted linear model summarizes how changes in extras may result in change in team's total runs. Regression outputs includes an intercept $\hat{\beta_0} = 177.07$, which indicates that a team is expected to score 177 runs in a match with 0 extras scored. This has relatively small standard error (8.34), is statistically significant and gives confidence in the predictions.
 
--   The intercept estimate $\hat{\beta_0}=b_0 = 177.07$ represents that the expected total runs in a match is 177 when the extras scored is 0, it is statistically significant as the standard error is 8.34 which is $<5\%$
+The slope coefficients $\hat{\beta_1}=1.88$, suggests that each additional extra run scored expects around a 2 runs increase in teams total score. This relation is statistically significant at the 5% level, as the p-value falls below the 0.05 for a t-test with null hypothesis ($H_0$) assumes that extras have no impact on total runs ($\beta_1=0$) while $H_A$ states that the extras scored do affect total runs ($\beta_1 != 0$). The p-value, measures the probability of observing a coefficient as extreme as the estimated if null hypothesis were true, a low value provides strong evidence against $H_0$.
 
--   The slope estimate $\hat{\beta_1}=b_1=1.88$ represents the expected change in total runs with each additional extra run scored, i .e, it is expected that an increase of 1.88 run for every additional extra scored in a match.
-
--   The p-value tests the null hypothesis that this effect is zero. If $p<0.05$, the relationship is considered statistically significant at the conventional 5% level. Which mean that there is a good amount of evidence that extras scored has a positive effect on the total score in a match.
-
--   This analysis prove that the disciplined bowling and fielding to avoid or minimize extras will boost a team's chance of conceding high scores and hence would have a better shot at winning.
+Hence, the regression suggests that minimizing extras through disciplined bowling and fielding can result in a lower opponent team 's score. As conceding additional extras would increase the opponent's team total.
 
 ```{r}
 #| warning: false
 #| message: false
 #| echo: false
+#| fig-cap: "Scatter plot illustrating the relationship between extras scored and total runs in Asia Cup matches, with a fitted regression"
+#| label: fig-regression1
 
 ggplot(asia_cup, aes(x = Extras.Scored, y = Run.Scored)) +
   geom_point(color = "blue", alpha = 0.7, size = 2) +
-  annotate("text", x = 30, y = 300, label = "y = 177.07 + 1.88x", size = 6, color = "black") +
+  annotate("text", x = 33, y = 300, label = "y = 177.07 + 1.88x", size = 5, color = "black") +
   geom_smooth(method = "lm", color = "red", se = TRUE) +
   labs(
     x = "Extras Scored",
@@ -271,34 +269,33 @@ ggplot(asia_cup, aes(x = Extras.Scored, y = Run.Scored)) +
   theme_minimal()
 ```
 
+The [@fig-regression1] presents the fitted regression line along with its confidence bands (shaded regions) for the relation between extras scored and total runs. The red line is the predicted values from the regression model, and the surrounding grey band shows the confidence interval around these estimates, i.e, the degree of uncertainty for the predictions. The width of this confidence band increase as the number of extras scored increase, suggesting that there will be a greater uncertainty in predicting the total score when the extras scored are more. This figure shows a support for positive association between the Extras Scored and Total Runs Scored.
+
 ```{r}
 #| warning: false
 #| message: false
 #| echo: false
+#| fig-cap: "Regression model diagnostic plots for Asia Cup data for Run Scored regressed on Extras Scored: the left panel displays residuals versus fitted values, highlighting the spread and potential patterns; the right panel presents a Q-Q plot of standardized residuals against theoretical normal quantiles"
+#| label: fig-residuals1
 
-resids <- residuals(fit_extras)
-fitted <- fitted(fit_extras)
 
-par(mfrow = c(1, 2))  # Arrange plots side by side
+# Set up side-by-side plotting
+par(mfrow = c(1, 2))
 
-# 1. Residuals vs Fitted plot
-plot(fitted, resids,
-     xlab = "Fitted values",
-     ylab = "Residuals",
-     main = "Residuals vs Fitted")
-abline(h = 0, col = "red", lwd = 2)
+# 1. Residuals vs Fitted panel (from lm diagnostics)
+plot(fit_extras, which = 1)
 
-# 2. QQ plot with x = y line
-qq <- qqnorm(resids,
-             main = "Q-Q Residuals",
-             xlab = "Theoretical Quantiles",
-             ylab = "Standardized residuals")
-abline(0, 1, col = "blue", lwd = 2)   # This is the x = y line
+# 2. Standardized Q-Q plot with identity line highlighted
+stdres <- rstandard(fit_extras)  # Get standardized residuals
+qqnorm(stdres, main = "Q-Q Plot")
+abline(0, 1, col = "red", lwd = 2, lty = 2)  # Highlight x = y identity line
 
-par(mfrow = c(1, 1)) # Reset plotting area
+# Reset plotting layout
+par(mfrow = c(1, 1))
+
 ```
 
-The model’s residuals are spread around zero, and the Q-Q plot shows a reasonable pattern but no alignment with the normal quantiles.
+The diagnostic plots from [@fig-residuals1] shows that the regression model is appropriate for analyzing the relation between extras and total runs in Asia Cup Cricket matches. The residuals are approximately even in distribution around zero with no strong patterns. The Q-Q plot shows a distribution that reasonably aligns well with normal distribution, indicating that the linear model's assumptions are valid with slight fluctuations at the extremes which are explainable due to the presence of outliers.
 
 **2. Regression of Total Runs on Highest Individual Score**
 
@@ -322,25 +319,22 @@ kable(tbl_highscore, escape = FALSE, caption = "Estimated coefficients from the 
 
 ```
 
-*Interpretation*:
+The regression analyses the relation between a team's highest individual score and its total runs gives us several insights. The intercept estimate $\hat{\beta_0} = 83.20$ suggests that, if no player scored any runs, the team total would be predicted as 83.2. This is not directly meaningful for cricket matches, but represents a mathematical fit based on the available data. On the other hand, the slope $\hat{\beta_1} = 1.71$ indicates a positive association, i.e, for every extra run scored by the top batsman, the team's total is expected to increase by around 1.71 runs. Both coefficients have low standard errors, which provides support to the predicted values.
 
--   The intercept estimate $\hat{\beta_0}=b_0=83.20$ indicate that the expected team total would be 83.2 if the highest individual score is 0, which does not make a lot of sense. But based on the available data and the regression fit, this is interpreted.
-
--   The slope estimate $\hat{\beta_1}=b_1=1.71$ represents the expected change in total runs for each additional run scored by the team’s top batter, i.e, with every additional run scored by the top batter in a match, the teams total is expected to rise by 1.71 runs.
-
--   The standard errors of both the estimates are quite low.
-
--   The p-value and standard error provide evidence about precision and statistical significance and not just any random chance but a real and consistent effect in the cricket matches.
+The p-values being small indicate high statistical significance for a test of association between highest individual score and the team's total runs. A t-test on slope coefficient ($\beta_1$) where ($H_0:\beta_1=0$), meaning that the highest individual score has no effect on team's total score, v/s ($H_A:\beta_1!=0$), indicating an effect exists. p-values accompanying the slope measures the probability of observing such a strong relation when null-hypothesis is true. Small p-value is the strong evidence against Null Hypothesis. Thus, the regression results reinforce the practical impact of top individual performances in cricket outcomes.
 
 ```{r}
 #| warning: false
 #| message: false
 #| echo: false
+#| fig-cap: "Scatter plot illustrating the relationship between the highest individual score and total runs scored in Asia Cup matches"
+#| label: fig-regression2
+
 
 ggplot(asia_cup, aes(x = Highest.Score, y = Run.Scored)) +
   geom_point(color = "red", alpha = 0.7, size = 2) +
   geom_smooth(method = "lm", color = "blue", se = TRUE) +
-  annotate("text", x = 150, y = 300, label = "y = 83.20 + 1.71x", size = 6, color = "black") +
+  annotate("text", x = 150, y = 200, label = "y = 83.20 + 1.71x", size = 6, color = "black") +
   labs(
     x = "Highest Individual Score",
     y = "Run Scored",
@@ -350,35 +344,34 @@ ggplot(asia_cup, aes(x = Highest.Score, y = Run.Scored)) +
 
 ```
 
+The scatter plot in [@fig-regression2] with a regression line gives a summary, showing that total runs increase as the highest individual score rises. The Highest Individual Score vs Run Scored show considerable spread and a positive association, and regression line fits well to the existing data. The confidence bands around the line becomes wider for high scores, which shows increasing uncertainty while predicting total runs. The visualization confirms that the strong influence of a team's top scorer on the team's total score.
+
 ```{r}
 #| warning: false
 #| message: false
 #| echo: false
+#| fig-cap: "Regression model diagnostic plots for Asia Cup data for Runs Scored regressed on Highest Individual Score: the left panel displays residuals versus fitted values, highlighting the spread and potential patterns; the right panel presents a Q-Q plot of standardized residuals against theoretical normal quantiles"
+#| label: fig-residuals2
 
-resids <- residuals(fit_highscore)
-fitted <- fitted(fit_highscore)
 
-par(mfrow = c(1, 2))  # Arrange plots side by side
+# Set up side-by-side plotting
+par(mfrow = c(1, 2))
 
-# 1. Residuals vs Fitted plot
-plot(fitted, resids,
-     xlab = "Fitted values",
-     ylab = "Residuals",
-     main = "Residuals vs Fitted")
-abline(h = 0, col = "red", lwd = 2)
+# 1. Residuals vs Fitted panel (from lm diagnostics)
+plot(fit_highscore, which = 1)
 
-# 2. QQ plot with x = y line
-qq <- qqnorm(resids,
-             main = "Q-Q Residuals",
-             xlab = "Theoretical Quantiles",
-             ylab = "Standardized residuals")
-abline(0, 1, col = "blue", lwd = 2)   # This is the x = y line
+# 2. Standardized Q-Q plot with identity line highlighted
+stdres <- rstandard(fit_highscore)  # Get standardized residuals
+qqnorm(stdres, main = "Q-Q Plot")
+abline(0, 1, col = "red", lwd = 2, lty = 2)  # Highlight x = y identity line
 
-par(mfrow = c(1, 1)) # Reset plotting area
-
+# Reset plotting layout
+par(mfrow = c(1, 1))
 ```
 
-The residuals vs fitted plot for the regression of highest individual score on run scored has a pattern where the residuals are randomly distributed. The Q-Q plot doesn't follow normal well for this regression.
+The left pane - residuals vs fitted values plot represents how much the observed total runs differ from values predicted by the regression model. The random scatter of these residuals around the origin shows that the model learns the patterns without any biases. But a downward trend at higher fitted values might be due to any outliers in the dataset. On the other hand the Q-Q plot evaluates if the residuals are distributed normally. As most of the points fall close to the normal assumption (on the x=y line), this suggests that the normality assumption is largely reasonable. The non-alignment at the upper and lower ends suggests a deviation from normality at extreme scores.
+
+Overall, these plots support the usage of linear models for this analysis, but also highlight the areas like extreme scores (high and low) where the predictions may be less accurate.
 
 # Discussion {#section-discussion}
 
